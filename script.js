@@ -15,7 +15,6 @@ function addMessage(sender, text) {
   msg.className = `message ${sender}`;
   msg.innerHTML = text.replace(/\n/g, "<br>");
 
-  
   chatbox.appendChild(msg);
   chatbox.scrollTop = chatbox.scrollHeight;
 }
@@ -23,14 +22,14 @@ function addMessage(sender, text) {
 function addCitations(citations) {
   if (!citations || citations.length === 0) return;
 
-  console.log("Citations received:", citations); // ✅ check what's coming in
+  console.log("Citations received:", citations);
 
   const citationContainer = document.createElement("div");
   citationContainer.className = "citations";
   citationContainer.innerHTML = `<strong>Referenced Documents:</strong>`;
 
   citations.forEach(cite => {
-    if (!cite.url) return; // skip if no URL
+    if (!cite.url) return;
 
     const link = document.createElement("a");
     link.href = cite.url;
@@ -49,14 +48,11 @@ function addCitations(citations) {
     citationContainer.appendChild(link);
   });
 
-  // Only append if we actually have valid links
   if (citationContainer.childElementCount > 1) {
     chatbox.appendChild(citationContainer);
     chatbox.scrollTop = chatbox.scrollHeight;
   }
 }
-
-
 
 // Typing indicator
 function showTyping() {
@@ -129,7 +125,7 @@ async function sendMessage() {
     addMessage("bot", data.response || "No response from agent.");
     if (data.citations) addCitations(data.citations);
 
-    // Show suggestions from API or fallback
+    // Show suggestions
     if (data.suggestions && data.suggestions.length > 0) {
       showSuggestions(data.suggestions);
     } 
@@ -142,14 +138,14 @@ async function sendMessage() {
     setTimeout(() => {
       isWaiting = false;
       sendBtn.disabled = false;
-    }, 500); // short delay for smooth UX
+    }, 500);
   }
 }
 
 // --- Event listeners ---
 window.addEventListener("DOMContentLoaded", () => {
   loadChat();
-  localStorage.clear();
+
   document.querySelectorAll(".suggestion-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       messageInput.value = btn.textContent;
@@ -157,7 +153,6 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
   
-  // Clear chat button
   const clearBtn = document.getElementById("clearBtn");
   clearBtn.addEventListener("click", () => {
     chatbox.innerHTML = "";

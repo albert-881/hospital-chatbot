@@ -1,5 +1,5 @@
 // Replace with your Lambda Function URL
-const LAMBDA_URL = "https://ih8k9uaxae.execute-api.us-east-1.amazonaws.com/default/frontend-to-agentHOSPITAL";
+const LAMBDA_URL = "https://744omkgp7soasyumfsxlx6cixq0bzvaa.lambda-url.us-east-1.on.aws/";
 
 const chatbox = document.getElementById("chatbox");
 const messageInput = document.getElementById("messageInput");

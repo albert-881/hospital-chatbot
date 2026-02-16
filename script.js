@@ -90,7 +90,6 @@ function loadChat() {
   if (saved) chatbox.innerHTML = saved;
 }
 
-// --- Main sendMessage ---
 async function sendMessage() {
   if (isWaiting) return;
 
@@ -112,35 +111,52 @@ async function sendMessage() {
       body: JSON.stringify({ message: userMessage, session_id: sessionId })
     });
 
-    const data = await response.json();
+    let data = {};
+    try {
+      data = await response.json();
+    } catch {
+      data = {};
+    }
+
     typingIndicator.remove();
 
-    // Update session
+    if (!response.ok) {
+      throw new Error("Server temporarily unavailable");
+    }
+
     if (data.session_id) {
       sessionId = data.session_id;
       localStorage.setItem("sessionId", sessionId);
     }
 
-    // Show bot response
-    addMessage("bot", data.response || "No response from agent.");
+    if (data.error) {
+      addMessage("bot", "⚠️ " + data.error);
+      return;
+    }
+
+    addMessage(
+      "bot",
+      data.response || "I’m having trouble answering that right now."
+    );
+
     if (data.citations) addCitations(data.citations);
 
-    // Show suggestions
-    if (data.suggestions && data.suggestions.length > 0) {
+    if (data.suggestions?.length) {
       showSuggestions(data.suggestions);
-    } 
+    }
 
   } catch (err) {
     typingIndicator.remove();
-    addMessage("bot", "⚠️ Error: " + err.message);
+    addMessage("bot", "⚠️ Please try again in a moment.");
   } finally {
     saveChat();
     setTimeout(() => {
       isWaiting = false;
       sendBtn.disabled = false;
-    }, 500);
+    }, 400);
   }
 }
+
 
 // --- Event listeners ---
 window.addEventListener("DOMContentLoaded", () => {

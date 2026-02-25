@@ -6,7 +6,7 @@ const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
 const suggestionsContainer = document.getElementById("suggestions");
 
-let sessionId = localStorage.getItem("sessionId") || null;
+let sessionId = null;
 let isWaiting = false;
 
 // --- Helpers ---
@@ -80,15 +80,7 @@ function showSuggestions(options) {
   });
 }
 
-// Chat persistence
-function saveChat() {
-  localStorage.setItem("chatHistory", chatbox.innerHTML);
-}
 
-function loadChat() {
-  const saved = localStorage.getItem("chatHistory");
-  if (saved) chatbox.innerHTML = saved;
-}
 
 async function sendMessage() {
   if (isWaiting) return;
@@ -126,7 +118,7 @@ async function sendMessage() {
 
     if (data.session_id) {
       sessionId = data.session_id;
-      localStorage.setItem("sessionId", sessionId);
+      
     }
 
     if (data.error) {
@@ -160,7 +152,7 @@ async function sendMessage() {
 
 // --- Event listeners ---
 window.addEventListener("DOMContentLoaded", () => {
-  loadChat();
+  
 
   document.querySelectorAll(".suggestion-btn").forEach(btn => {
     btn.addEventListener("click", () => {
@@ -173,8 +165,7 @@ window.addEventListener("DOMContentLoaded", () => {
   clearBtn.addEventListener("click", () => {
     chatbox.innerHTML = "";
     suggestionsContainer.innerHTML = "";
-    localStorage.removeItem("chatHistory");
-    localStorage.removeItem("sessionId");
+    
     sessionId = null;
   });
 });
@@ -184,5 +175,4 @@ messageInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
-// Save chat before closing or refreshing
-window.addEventListener("beforeunload", saveChat);
+

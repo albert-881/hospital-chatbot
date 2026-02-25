@@ -54,10 +54,13 @@ function addCitations(citations) {
   return null;
 }
 
-// Scroll helper: scroll chatbox to the top of a given element
 function scrollToTopOfElement(el) {
   if (!el) return;
-  chatbox.scrollTop = el.offsetTop;
+
+  const chatboxRect = chatbox.getBoundingClientRect();
+  const elRect = el.getBoundingClientRect();
+
+  chatbox.scrollTop += elRect.top - chatboxRect.top;
 }
 
 // Typing indicator

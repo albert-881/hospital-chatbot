@@ -14,14 +14,12 @@ function addMessage(sender, text) {
   const msg = document.createElement("div");
   msg.className = `message ${sender}`;
   msg.innerHTML = text.replace(/\n/g, "<br>");
-
   chatbox.appendChild(msg);
-  // Scroll to the top of the latest message instead of the bottom
-  msg.scrollIntoView({ behavior: "smooth", block: "start" });
+  return msg; // Return the element for scrolling purposes
 }
 
 function addCitations(citations) {
-  if (!citations || citations.length === 0) return;
+  if (!citations || citations.length === 0) return null;
 
   console.log("Citations received:", citations);
 
@@ -51,8 +49,15 @@ function addCitations(citations) {
 
   if (citationContainer.childElementCount > 1) {
     chatbox.appendChild(citationContainer);
-    citationContainer.scrollIntoView({ behavior: "smooth", block: "start" });
+    return citationContainer;
   }
+  return null;
+}
+
+// Scroll helper: scroll chatbox to the top of a given element
+function scrollToTopOfElement(el) {
+  if (!el) return;
+  chatbox.scrollTop = el.offsetTop;
 }
 
 // Typing indicator
@@ -61,7 +66,7 @@ function showTyping() {
   typing.className = "message bot typing";
   typing.textContent = "Bot is typing...";
   chatbox.appendChild(typing);
-  typing.scrollIntoView({ behavior: "smooth", block: "start" });
+  chatbox.scrollTop = chatbox.scrollHeight; // Keep typing at bottom while typing
   return typing;
 }
 
@@ -81,8 +86,6 @@ function showSuggestions(options) {
   });
 }
 
-
-
 async function sendMessage() {
   if (isWaiting) return;
 
@@ -96,10 +99,11 @@ async function sendMessage() {
     lower.includes("what do you do") ||
     lower.includes("what are you able to answer")
   ) {
-    addMessage(
+    const botMsg = addMessage(
       "bot",
       "I can answer questions about hospital employee benefits, medical plans, FSAs, voluntary programs, eligibility rules, and enrollment details based on official hospital documentation."
     );
+    scrollToTopOfElement(botMsg);
     messageInput.value = "";
     return; // Stop here — do NOT call Lambda
   }
@@ -138,16 +142,22 @@ async function sendMessage() {
     }
 
     if (data.error) {
-      addMessage("bot", "⚠️ " + data.error);
+      const errMsg = addMessage("bot", "⚠️ " + data.error);
+      scrollToTopOfElement(errMsg);
       return;
     }
 
-    addMessage(
+    // Add bot response
+    const botMsg = addMessage(
       "bot",
       data.response || "I’m having trouble answering that right now."
     );
 
-    if (data.citations) addCitations(data.citations);
+    // Add citations if any
+    const citationEl = addCitations(data.citations);
+
+    // Scroll to the top of the bot message (before citations)
+    scrollToTopOfElement(botMsg);
 
     if (data.suggestions?.length) {
       showSuggestions(data.suggestions);
@@ -155,7 +165,8 @@ async function sendMessage() {
 
   } catch (err) {
     typingIndicator.remove();
-    addMessage("bot", "⚠️ Please try again in a moment.");
+    const errMsg = addMessage("bot", "⚠️ Please try again in a moment.");
+    scrollToTopOfElement(errMsg);
   } finally {
     setTimeout(() => {
       isWaiting = false;
@@ -164,23 +175,19 @@ async function sendMessage() {
   }
 }
 
-
 // --- Event listeners ---
 window.addEventListener("DOMContentLoaded", () => {
-  
-
   document.querySelectorAll(".suggestion-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       messageInput.value = btn.textContent;
       sendMessage();
     });
   });
-  
+
   const clearBtn = document.getElementById("clearBtn");
   clearBtn.addEventListener("click", () => {
     chatbox.innerHTML = "";
     suggestionsContainer.innerHTML = "";
-    
     sessionId = null;
   });
 });
@@ -189,5 +196,3 @@ sendBtn.addEventListener("click", sendMessage);
 messageInput.addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
-
-

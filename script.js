@@ -141,7 +141,7 @@ async function sendMessage() {
     typingIndicator.remove();
     addMessage("bot", "⚠️ Please try again in a moment.");
   } finally {
-    saveChat();
+    
     setTimeout(() => {
       isWaiting = false;
       sendBtn.disabled = false;

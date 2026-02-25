@@ -16,7 +16,8 @@ function addMessage(sender, text) {
   msg.innerHTML = text.replace(/\n/g, "<br>");
 
   chatbox.appendChild(msg);
-  chatbox.scrollTop = chatbox.scrollHeight;
+  // Scroll to the top of the latest message instead of the bottom
+  msg.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function addCitations(citations) {

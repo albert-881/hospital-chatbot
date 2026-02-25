@@ -51,7 +51,7 @@ function addCitations(citations) {
 
   if (citationContainer.childElementCount > 1) {
     chatbox.appendChild(citationContainer);
-    chatbox.scrollTop = chatbox.scrollHeight;
+    citationContainer.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 
@@ -61,7 +61,7 @@ function showTyping() {
   typing.className = "message bot typing";
   typing.textContent = "Bot is typing...";
   chatbox.appendChild(typing);
-  chatbox.scrollTop = chatbox.scrollHeight;
+  typing.scrollIntoView({ behavior: "smooth", block: "start" });
   return typing;
 }
 

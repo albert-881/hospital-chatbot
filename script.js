@@ -88,6 +88,22 @@ async function sendMessage() {
   const userMessage = messageInput.value.trim();
   if (!userMessage) return;
 
+  // --- HANDLE META QUESTIONS LOCALLY ---
+  const lower = userMessage.toLowerCase();
+  if (
+    lower.includes("what can you talk about") ||
+    lower.includes("what do you do") ||
+    lower.includes("what are you able to answer")
+  ) {
+    addMessage(
+      "bot",
+      "I can answer questions about hospital employee benefits, medical plans, FSAs, voluntary programs, eligibility rules, and enrollment details based on official hospital documentation."
+    );
+    messageInput.value = "";
+    return; // Stop here — do NOT call Lambda
+  }
+
+  // --- NORMAL FLOW ---
   addMessage("user", userMessage);
   messageInput.value = "";
 
@@ -118,7 +134,6 @@ async function sendMessage() {
 
     if (data.session_id) {
       sessionId = data.session_id;
-      
     }
 
     if (data.error) {
@@ -141,7 +156,6 @@ async function sendMessage() {
     typingIndicator.remove();
     addMessage("bot", "⚠️ Please try again in a moment.");
   } finally {
-    
     setTimeout(() => {
       isWaiting = false;
       sendBtn.disabled = false;

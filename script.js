@@ -76,63 +76,36 @@ async function sendMessage() {
   const userMessage = messageInput.value.trim();
   if (!userMessage) return;
 
-  // Handle meta questions locally
-  const lower = userMessage.toLowerCase();
-  if (
-    lower.includes("what can you talk about") ||
-    lower.includes("what do you do") ||
-    lower.includes("what are you able to answer")
-  ) {
-    addMessage("bot", "I can answer questions about hospital employee benefits, medical plans, FSAs, voluntary programs, eligibility rules, and enrollment details based on official hospital documentation.");
-    messageInput.value = "";
-    return;
-  }
-
   addMessage("user", userMessage);
   messageInput.value = "";
 
   isWaiting = true;
   sendBtn.disabled = true;
-
-  const typingIndicator = showTyping();
+  const botMsg = addMessage("bot", ""); // empty message for streaming
 
   try {
     const response = await fetch(LAMBDA_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: userMessage, session_id: sessionId, stream: true }) // tell Lambda we want streaming
+      body: JSON.stringify({ message: userMessage, session_id: sessionId })
     });
 
-    if (!response.ok) throw new Error("Server temporarily unavailable");
+    const data = await response.json();
 
-    // --- Streaming reader ---
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder("utf-8");
-    let botMsg = addMessage("bot", "");
-    let done = false;
+    if (data.session_id) sessionId = data.session_id;
 
-    while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
-      if (value) {
-        botMsg.innerHTML += decoder.decode(value);
-        chatbox.scrollTop = chatbox.scrollHeight;
-      }
+    // Stream chunks to bot message
+    for (let chunk of data.chunks) {
+      const chunkObj = JSON.parse(chunk);
+      botMsg.innerHTML += chunkObj.text.replace(/\n/g, "<br>");
+      chatbox.scrollTop = chatbox.scrollHeight;
     }
 
-    typingIndicator.remove();
-
-    // Try to get the final JSON if Lambda sends citations or session_id
-    try {
-      const finalData = await response.json();
-      if (finalData.session_id) sessionId = finalData.session_id;
-      if (finalData.citations) addCitations(finalData.citations);
-      if (finalData.suggestions?.length) showSuggestions(finalData.suggestions);
-    } catch { /* ignore if streaming text only */ }
+    // Show citations after streaming completes
+    addCitations(data.citations);
 
   } catch (err) {
-    typingIndicator.remove();
-    addMessage("bot", "⚠️ Please try again in a moment.");
+    botMsg.innerHTML = "⚠️ Please try again in a moment.";
   } finally {
     isWaiting = false;
     sendBtn.disabled = false;

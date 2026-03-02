@@ -10,32 +10,29 @@ let sessionId = null;
 let isWaiting = false;
 
 // --- Helpers ---
-function addMessage(sender, text) {
+function addMessage(sender, text = "") {
   const msg = document.createElement("div");
   msg.className = `message ${sender}`;
   msg.innerHTML = text.replace(/\n/g, "<br>");
   chatbox.appendChild(msg);
-  return msg; // Return the element for scrolling purposes
+  chatbox.scrollTop = chatbox.scrollHeight;
+  return msg;
 }
 
 function addCitations(citations) {
   if (!citations || citations.length === 0) return null;
 
-  console.log("Citations received:", citations);
-
-  const citationContainer = document.createElement("div");
-  citationContainer.className = "citations";
-  citationContainer.innerHTML = `<strong>Referenced Documents:</strong>`;
+  const container = document.createElement("div");
+  container.className = "citations";
+  container.innerHTML = "<strong>Referenced Documents:</strong>";
 
   citations.forEach(cite => {
     if (!cite.url) return;
-
     const link = document.createElement("a");
     link.href = cite.url;
     link.target = "_blank";
     link.rel = "noopener noreferrer";
     link.textContent = cite.title || cite.url;
-
     link.style.display = "block";
     link.style.marginTop = "4px";
     link.style.color = "#2b63ff";
@@ -43,37 +40,20 @@ function addCitations(citations) {
     link.style.fontWeight = "500";
     link.addEventListener("mouseover", () => link.style.textDecoration = "underline");
     link.addEventListener("mouseout", () => link.style.textDecoration = "none");
-
-    citationContainer.appendChild(link);
+    container.appendChild(link);
   });
 
-  if (citationContainer.childElementCount > 1) {
-    chatbox.appendChild(citationContainer);
-    return citationContainer;
-  }
-  return null;
+  if (container.childElementCount > 1) chatbox.appendChild(container);
+  return container;
 }
 
-function scrollToTopOfElement(el) {
-  if (!el) return;
-
-  const chatboxRect = chatbox.getBoundingClientRect();
-  const elRect = el.getBoundingClientRect();
-
-  chatbox.scrollTop += elRect.top - chatboxRect.top;
-}
-
-// Typing indicator
 function showTyping() {
-  const typing = document.createElement("div");
-  typing.className = "message bot typing";
-  typing.textContent = "Bot is typing...";
-  chatbox.appendChild(typing);
-  chatbox.scrollTop = chatbox.scrollHeight; // Keep typing at bottom while typing
+  const typing = addMessage("bot", "Bot is typing...");
+  typing.classList.add("typing");
   return typing;
 }
 
-// Show suggestion buttons
+// --- Suggestion buttons ---
 function showSuggestions(options) {
   suggestionsContainer.innerHTML = "";
   options.forEach(text => {
@@ -89,29 +69,25 @@ function showSuggestions(options) {
   });
 }
 
+// --- Send message ---
 async function sendMessage() {
   if (isWaiting) return;
 
   const userMessage = messageInput.value.trim();
   if (!userMessage) return;
 
-  // --- HANDLE META QUESTIONS LOCALLY ---
+  // Handle meta questions locally
   const lower = userMessage.toLowerCase();
   if (
     lower.includes("what can you talk about") ||
     lower.includes("what do you do") ||
     lower.includes("what are you able to answer")
   ) {
-    const botMsg = addMessage(
-      "bot",
-      "I can answer questions about hospital employee benefits, medical plans, FSAs, voluntary programs, eligibility rules, and enrollment details based on official hospital documentation."
-    );
-    scrollToTopOfElement(botMsg);
+    addMessage("bot", "I can answer questions about hospital employee benefits, medical plans, FSAs, voluntary programs, eligibility rules, and enrollment details based on official hospital documentation.");
     messageInput.value = "";
-    return; // Stop here — do NOT call Lambda
+    return;
   }
 
-  // --- NORMAL FLOW ---
   addMessage("user", userMessage);
   messageInput.value = "";
 
@@ -124,57 +100,42 @@ async function sendMessage() {
     const response = await fetch(LAMBDA_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: userMessage, session_id: sessionId })
+      body: JSON.stringify({ message: userMessage, session_id: sessionId, stream: true }) // tell Lambda we want streaming
     });
 
-    let data = {};
-    try {
-      data = await response.json();
-    } catch {
-      data = {};
+    if (!response.ok) throw new Error("Server temporarily unavailable");
+
+    // --- Streaming reader ---
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+    let botMsg = addMessage("bot", "");
+    let done = false;
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      done = doneReading;
+      if (value) {
+        botMsg.innerHTML += decoder.decode(value);
+        chatbox.scrollTop = chatbox.scrollHeight;
+      }
     }
 
     typingIndicator.remove();
 
-    if (!response.ok) {
-      throw new Error("Server temporarily unavailable");
-    }
-
-    if (data.session_id) {
-      sessionId = data.session_id;
-    }
-
-    if (data.error) {
-      const errMsg = addMessage("bot", "⚠️ " + data.error);
-      scrollToTopOfElement(errMsg);
-      return;
-    }
-
-    // Add bot response
-    const botMsg = addMessage(
-      "bot",
-      data.response || "I’m having trouble answering that right now."
-    );
-
-    // Add citations if any
-    const citationEl = addCitations(data.citations);
-
-    // Scroll to the top of the bot message (before citations)
-    scrollToTopOfElement(botMsg);
-
-    if (data.suggestions?.length) {
-      showSuggestions(data.suggestions);
-    }
+    // Try to get the final JSON if Lambda sends citations or session_id
+    try {
+      const finalData = await response.json();
+      if (finalData.session_id) sessionId = finalData.session_id;
+      if (finalData.citations) addCitations(finalData.citations);
+      if (finalData.suggestions?.length) showSuggestions(finalData.suggestions);
+    } catch { /* ignore if streaming text only */ }
 
   } catch (err) {
     typingIndicator.remove();
-    const errMsg = addMessage("bot", "⚠️ Please try again in a moment.");
-    scrollToTopOfElement(errMsg);
+    addMessage("bot", "⚠️ Please try again in a moment.");
   } finally {
-    setTimeout(() => {
-      isWaiting = false;
-      sendBtn.disabled = false;
-    }, 400);
+    isWaiting = false;
+    sendBtn.disabled = false;
   }
 }
 
@@ -187,8 +148,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  const clearBtn = document.getElementById("clearBtn");
-  clearBtn.addEventListener("click", () => {
+  document.getElementById("clearBtn")?.addEventListener("click", () => {
     chatbox.innerHTML = "";
     suggestionsContainer.innerHTML = "";
     sessionId = null;
@@ -196,6 +156,6 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 sendBtn.addEventListener("click", sendMessage);
-messageInput.addEventListener("keypress", (e) => {
+messageInput.addEventListener("keypress", e => {
   if (e.key === "Enter") sendMessage();
 });

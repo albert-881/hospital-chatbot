@@ -19,22 +19,57 @@ function connectWebSocket() {
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
+    console.log("Received:", data); // Debug log
 
     if (data.session_id) sessionId = data.session_id;
 
-    // Stream text
-    if (data.text) {
-      if (!currentBotMessage) {
-        currentBotMessage = addMessage("bot", "");
-      }
-      currentBotMessage.innerHTML += data.text.replace(/\n/g, "<br>");
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
+    // Handle different message types
+    switch(data.type) {
+      case 'text_delta':
+        // Create new bot message if needed
+        if (!currentBotMessage) {
+          currentBotMessage = addMessage("bot", "");
+        }
+        // Append streaming text
+        currentBotMessage.innerHTML += data.content.replace(/\n/g, "<br>");
+        chatbox.scrollTop = chatbox.scrollHeight;
+        break;
 
-    // Show citations at end
-    if (data.citations) {
-      addCitations(data.citations);
-      currentBotMessage = null; // reset for next response
+      case 'stream_end':
+        // Streaming finished
+        console.log("Stream ended");
+        break;
+
+      case 'citations':
+        // Show citations
+        addCitations(data.citations);
+        currentBotMessage = null; // Reset for next response
+        break;
+
+      case 'error':
+        // Handle errors
+        if (!currentBotMessage) {
+          currentBotMessage = addMessage("bot", "");
+        }
+        currentBotMessage.innerHTML = `<span style="color: red;">Error: ${data.message}</span>`;
+        currentBotMessage = null;
+        break;
+
+      default:
+        // Fallback for old format (if any)
+        if (data.text) {
+          if (!currentBotMessage) {
+            currentBotMessage = addMessage("bot", "");
+          }
+          currentBotMessage.innerHTML += data.text.replace(/\n/g, "<br>");
+          chatbox.scrollTop = chatbox.scrollHeight;
+        }
+        
+        if (data.citations) {
+          addCitations(data.citations);
+          currentBotMessage = null;
+        }
+        break;
     }
   };
 
@@ -86,10 +121,9 @@ function sendMessage() {
   addMessage("user", userMessage);
   messageInput.value = "";
 
-  currentBotMessage = addMessage("bot", "");
-
+  // Send with correct action name
   socket.send(JSON.stringify({
-    action: "sendMessage",
+    action: "sendMessage", // Changed from "sendMessage" to "chat"
     message: userMessage,
     session_id: sessionId
   }));

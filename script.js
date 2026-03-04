@@ -26,15 +26,12 @@ function connectWebSocket() {
     // Handle different message types
     switch(data.type) {
       case 'text_delta':
-        // Create new bot message if needed
         if (!currentBotMessage) {
-            currentBotMessage = addMessage("bot", "");
-            
-            // Scroll to top of this new bot message
-            chatbox.scrollTop = currentBotMessage.offsetTop;
+            currentBotMessage = addMessage("bot", ""); 
+            // We already created it on send, so usually this won't run
         }
 
-        // Append streaming text
+        // Append streaming text without scrolling
         currentBotMessage.innerHTML += data.content.replace(/\n/g, "<br>");
         break;
 
@@ -121,9 +118,17 @@ function sendMessage() {
   const userMessage = messageInput.value.trim();
   if (!userMessage || !socket || socket.readyState !== WebSocket.OPEN) return;
 
+  // Add user message
   addMessage("user", userMessage);
   messageInput.value = "";
 
+  // Create bot message placeholder immediately
+  currentBotMessage = addMessage("bot", "");
+
+  // Scroll to top of the new bot message
+  chatbox.scrollTop = currentBotMessage.offsetTop;
+
+  // Send message to WebSocket
   socket.send(JSON.stringify({
     action: "sendMessage",
     message: userMessage,

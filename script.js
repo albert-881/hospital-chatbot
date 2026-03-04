@@ -27,11 +27,15 @@ function connectWebSocket() {
     switch(data.type) {
       case 'text_delta':
         if (!currentBotMessage) {
-            currentBotMessage = addMessage("bot", ""); 
-            // We already created it on send, so usually this won't run
+            currentBotMessage = addMessage("bot", "");
         }
 
-        // Append streaming text without scrolling
+        // If placeholder is still there, replace it with first chunk
+        if (currentBotMessage.innerHTML.includes("The bot is thinking...")) {
+            currentBotMessage.innerHTML = ""; // remove placeholder
+        }
+
+        // Append streaming text
         currentBotMessage.innerHTML += data.content.replace(/\n/g, "<br>");
         break;
 
@@ -122,8 +126,8 @@ function sendMessage() {
   addMessage("user", userMessage);
   messageInput.value = "";
 
-  // Create bot message placeholder immediately
-  currentBotMessage = addMessage("bot", "");
+  // Create bot message placeholder immediately with "waiting" text
+  currentBotMessage = addMessage("bot", "...");
 
   // Scroll to top of the new bot message
   chatbox.scrollTop = currentBotMessage.offsetTop;

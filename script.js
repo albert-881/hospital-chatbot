@@ -121,9 +121,18 @@ function sendMessage() {
   addMessage("user", userMessage);
   messageInput.value = "";
 
-  // Send with correct action name
+  // Scroll to top of the latest bot response container (will be created soon)
+  setTimeout(() => {
+    if (currentBotMessage) {
+      chatbox.scrollTop = currentBotMessage.offsetTop;
+    } else {
+      // If bot message not yet created, scroll to top
+      chatbox.scrollTop = 0;
+    }
+  }, 50);
+
   socket.send(JSON.stringify({
-    action: "sendMessage", // Changed from "sendMessage" to "chat"
+    action: "sendMessage",
     message: userMessage,
     session_id: sessionId
   }));

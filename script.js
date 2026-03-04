@@ -32,7 +32,7 @@ function connectWebSocket() {
         }
         // Append streaming text
         currentBotMessage.innerHTML += data.content.replace(/\n/g, "<br>");
-        chatbox.scrollTop = chatbox.scrollHeight;
+        
         break;
 
       case 'stream_end':
@@ -89,7 +89,7 @@ function addMessage(sender, text = "") {
   msg.className = `message ${sender}`;
   msg.innerHTML = text;
   chatbox.appendChild(msg);
-  chatbox.scrollTop = chatbox.scrollHeight;
+  
   return msg;
 }
 

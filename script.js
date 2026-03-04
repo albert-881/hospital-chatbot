@@ -31,7 +31,7 @@ function connectWebSocket() {
         }
 
         // If placeholder is still there, replace it with first chunk
-        if (currentBotMessage.innerHTML.includes("The bot is thinking...")) {
+        if (currentBotMessage.innerHTML.includes("...")) {
             currentBotMessage.innerHTML = ""; // remove placeholder
         }
 

@@ -28,11 +28,14 @@ function connectWebSocket() {
       case 'text_delta':
         // Create new bot message if needed
         if (!currentBotMessage) {
-          currentBotMessage = addMessage("bot", "");
+            currentBotMessage = addMessage("bot", "");
+            
+            // Scroll to top of this new bot message
+            chatbox.scrollTop = currentBotMessage.offsetTop;
         }
+
         // Append streaming text
         currentBotMessage.innerHTML += data.content.replace(/\n/g, "<br>");
-        
         break;
 
       case 'stream_end':
@@ -120,16 +123,6 @@ function sendMessage() {
 
   addMessage("user", userMessage);
   messageInput.value = "";
-
-  // Scroll to top of the latest bot response container (will be created soon)
-  setTimeout(() => {
-    if (currentBotMessage) {
-      chatbox.scrollTop = currentBotMessage.offsetTop;
-    } else {
-      // If bot message not yet created, scroll to top
-      chatbox.scrollTop = 0;
-    }
-  }, 50);
 
   socket.send(JSON.stringify({
     action: "sendMessage",

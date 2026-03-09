@@ -40,6 +40,8 @@ body {
 
 /* Header */
 .chat-header {
+  display:flex;
+  justify-content: start;
   background: linear-gradient(90deg, #2563eb, #4a7dff);
   color: #fff;
   text-align: center;
@@ -72,6 +74,39 @@ body {
   line-height: 1.5;
   animation: fadeIn 0.25s ease forwards;
   position: relative;
+}
+
+.message-wrapper{
+  display:flex;
+  align-items:start;
+  gap:10px;
+}
+
+.message.user .message-wrapper{
+  flex-direction:row-reverse;
+}
+
+.avatar{
+  width:80px;
+  height:40px;
+  border-radius:50%;
+  overflow:hidden;
+}
+
+.avatar img{
+  width:120%;
+  height:auto;
+  transform: translate(-0%, 0%);
+}
+
+.bot-avatar{
+  background:linear-gradient(135deg,#2563eb,#4a7dff);
+  color:white;
+}
+
+.message-content{
+  display:flex;
+  flex-direction:column;
 }
 
 .user {
@@ -281,26 +316,44 @@ body {
 </head>
 <body>
   <div class="chat-container">
+
     <div class="chat-header">CHATBOT</div>
+
     <div id="chatbox">
+
+      <!-- Bot Message -->
       <div class="message bot">
-        <p><strong>Hello there!</strong><br>Type your question about our benefits guide:</p>
-        <div class="suggestions" style="margin-top: 10px; border: none; background: transparent; padding: 0;">
-          <button class="suggestion-btn">What can you talk about?</button>
-          <button class="suggestion-btn">How do FSAS work?</button>
-          
+        <div class="message-wrapper">
+
+          <div class="avatar">
+            <img src="bot.png" alt="Bot Avatar">
+          </div>
+
+          <div class="message-content">
+            <p><strong>What would you like to know about?</strong></p>
+
+            <div class="suggestions" style="margin-top:10px;border:none;background:transparent;padding:0;">
+              <button class="suggestion-btn">Tell me about Cost of Coverage</button>
+              <button class="suggestion-btn">What is the Quit for Life Tobacco Cessastion Program?</button>
+              <button class="suggestion-btn">How do Flexible Spending Accounts work?</button>
+            </div>
+
+          </div>
+
         </div>
       </div>
+
     </div>
-    
-    
+
+
     <div id="suggestions" class="suggestions"></div>
+
+
     <div id="inputArea">
       <input type="text" id="messageInput" placeholder="Type your message..." />
       <button id="clearBtn">Clear Chat</button>
       <button id="sendBtn">Send</button>
     </div>
-    
 
   </div>
 

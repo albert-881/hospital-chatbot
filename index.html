@@ -20,17 +20,16 @@ body {
 
 /* Chat container */
 .chat-container {
-  width: 700px;
+  width: 90vw;
   height: 650px;
   background: rgba(255, 255, 255, 0.75);
   border-radius: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
   display: flex;
-  flex-direction: column;
+  flex-direction: row;   /* CHANGE */
   overflow: hidden;
   backdrop-filter: blur(20px);
   border: 1px solid rgba(255, 255, 255, 0.4);
-  transition: all 0.3s ease;
 }
 
 .chat-container:hover {
@@ -68,7 +67,7 @@ body {
 .message {
   padding: 14px 18px;
   border-radius: 16px;
-  max-width: 80%;
+  max-width: 65%;
   word-wrap: break-word;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -76,28 +75,46 @@ body {
   position: relative;
 }
 
-.message-wrapper{
-  display:flex;
-  align-items:start;
-  gap:10px;
-}
+
 
 .message.user .message-wrapper{
   flex-direction:row-reverse;
 }
 
-.avatar{
-  width:80px;
-  height:40px;
-  border-radius:50%;
-  overflow:hidden;
+
+
+.avatar-panel{
+  width:220px;
+  background:linear-gradient(180deg,#2563eb,#4a7dff);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  color:white;
 }
 
-.avatar img{
-  width:120%;
-  height:auto;
-  transform: translate(-0%, 0%);
+.avatar-panel img{
+  width:120px;
+  border-radius:50%;
+  margin-bottom:10px;
 }
+
+.chat-interface{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+#chatbox{
+  flex:1;
+  padding:24px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+
+
 
 .bot-avatar{
   background:linear-gradient(135deg,#2563eb,#4a7dff);
@@ -315,47 +332,60 @@ body {
   </style>
 </head>
 <body>
+  
+  
   <div class="chat-container">
 
-    <div class="chat-header">CHATBOT</div>
+    <!-- LEFT AVATAR PANEL -->
+    <div class="avatar-panel">
+      <img src="Image.png" alt="Bot Avatar">
+      <h3>Chat with Ruven.</h3>
+    </div>
+  
+    <!-- RIGHT CHAT AREA -->
+    <div class="chat-interface">
+  
+      
+  
+      <div id="chatbox">
 
-    <div id="chatbox">
-
-      <!-- Bot Message -->
-      <div class="message bot">
-        <div class="message-wrapper">
-
-          <div class="avatar">
-            <img src="bot.png" alt="Bot Avatar">
-          </div>
-
-          <div class="message-content">
-            <p><strong>What would you like to know about?</strong></p>
-
-            <div class="suggestions" style="margin-top:10px;border:none;background:transparent;padding:0;">
-              <button class="suggestion-btn">Tell me about Cost of Coverage</button>
-              <button class="suggestion-btn">What is the Quit for Life Tobacco Cessastion Program?</button>
-              <button class="suggestion-btn">How do Flexible Spending Accounts work?</button>
+        <!-- Bot Message -->
+        <div class="message bot">
+          <div class="message-wrapper">
+  
+            
+  
+            <div class="message-content">
+              <p><strong>What would you like to know about?</strong></p>
+  
+              <div class="suggestions" style="margin-top:10px;border:none;background:transparent;padding:0;">
+                <button class="suggestion-btn">Tell me about Cost of Coverage</button>
+                <button class="suggestion-btn">What is the Quit for Life Tobacco Cessastion Program?</button>
+                <button class="suggestion-btn">How do Flexible Spending Accounts work?</button>
+              </div>
+  
             </div>
-
+  
           </div>
-
         </div>
+  
+        
+  
       </div>
-
+  <div id="inputArea">
+        <input type="text" id="messageInput" placeholder="Type your message..." />
+        <button id="clearBtn">Clear Chat</button>
+        <button id="sendBtn">Send</button>
+      </div>
+      
+  
+      
+  
     </div>
-
-
-    <div id="suggestions" class="suggestions"></div>
-
-
-    <div id="inputArea">
-      <input type="text" id="messageInput" placeholder="Type your message..." />
-      <button id="clearBtn">Clear Chat</button>
-      <button id="sendBtn">Send</button>
-    </div>
-
+  
   </div>
+
+
 
   <script src="script.js"></script>
 </body>

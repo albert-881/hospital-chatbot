@@ -149,3 +149,16 @@ sendBtn.addEventListener("click", sendMessage);
 messageInput.addEventListener("keypress", e => {
   if (e.key === "Enter") sendMessage();
 });
+
+document.addEventListener("click", function(e) {
+  if (e.target.classList.contains("suggestion-btn")) {
+
+    const suggestionText = e.target.innerText;
+
+    // Put suggestion into the input
+    messageInput.value = suggestionText;
+
+    // Send the message
+    sendMessage();
+  }
+});

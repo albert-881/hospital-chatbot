@@ -4,6 +4,7 @@ const chatbox = document.getElementById("chatbox");
 const messageInput = document.getElementById("messageInput");
 const sendBtn = document.getElementById("sendBtn");
 const suggestionsContainer = document.getElementById("suggestions");
+const clearBtn = document.getElementById("clearBtn");
 
 let sessionId = null;
 let socket = null;
@@ -148,6 +149,9 @@ window.addEventListener("DOMContentLoaded", () => {
 sendBtn.addEventListener("click", sendMessage);
 messageInput.addEventListener("keypress", e => {
   if (e.key === "Enter") sendMessage();
+});
+clearBtn.addEventListener("click", () => {
+  chatbox.innerHTML = "";   // clears all messages
 });
 
 document.addEventListener("click", function(e) {

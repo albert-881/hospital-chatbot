@@ -17,7 +17,12 @@ function connectWebSocket() {
   socket.onopen = () => {
     console.log("WebSocket connected");
   
-    
+    // Request knowledge base docs explicitly after connection
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({
+        action: "getDocs"   // this triggers your "getDocs" route in Lambda
+      }));
+    }
   };
 
   socket.onmessage = (event) => {

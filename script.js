@@ -16,6 +16,7 @@ function connectWebSocket() {
 
   socket.onopen = () => {
     console.log("WebSocket connected");
+    socket.send(JSON.stringify({ action: "getDocs" }));
   };
 
   socket.onmessage = (event) => {

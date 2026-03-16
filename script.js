@@ -17,19 +17,25 @@ function connectWebSocket() {
   socket.onopen = () => {
     console.log("WebSocket connected");
   
-    // Request knowledge base documents immediately
-    if (socket.readyState === WebSocket.OPEN) {
-      socket.send(JSON.stringify({ action: "getDocs" }));
-    }
+    // Send a getDocs request immediately, including session_id if available
+    socket.send(JSON.stringify({
+      action: "getDocs",
+      session_id: sessionId // can be null initially
+    }));
   };
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    console.log("Received:", data); // Debug log
 
-    if (data.session_id) sessionId = data.session_id;
+  if (data.session_id && !sessionId) {
+    sessionId = data.session_id;
 
-    // Handle different message types
+    // Request docs once sessionId is assigned
+    socket.send(JSON.stringify({
+      action: "getDocs",
+      session_id: sessionId
+    }));
+  }
     switch(data.type) {
       case 'text_delta':
         if (!currentBotMessage) {

@@ -60,6 +60,19 @@ function connectWebSocket() {
         currentBotMessage = null;
         break;
 
+      case 'docs_list':  // <-- NEW
+        const kbList = document.getElementById("kb-docs");
+        if (!kbList) return;
+    
+        kbList.innerHTML = "";  // clear old docs
+    
+        data.documents.forEach(doc => {
+          const li = document.createElement("li");
+          li.innerHTML = `<a href="${doc.url}" target="_blank">📄 ${doc.name}</a>`;
+          kbList.appendChild(li);
+        });
+        break;
+
       default:
         // Fallback for old format (if any)
         if (data.text) {

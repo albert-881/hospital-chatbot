@@ -137,6 +137,42 @@ body {
   opacity:0.85;
 }
 
+.kb-section{
+  width:100%;
+  padding:12px 16px;
+  overflow-y:auto;
+  flex:1;
+}
+
+.kb-section h4{
+  margin:0 0 8px 0;
+  font-size:0.9rem;
+  border-bottom:1px solid rgba(255,255,255,0.3);
+  padding-bottom:4px;
+}
+
+#kb-docs{
+  list-style:none;
+  padding:0;
+  margin:0;
+}
+
+#kb-docs li{
+  margin-bottom:6px;
+}
+
+#kb-docs a{
+  color:white;
+  text-decoration:none;
+  font-size:0.85rem;
+  opacity:0.9;
+}
+
+#kb-docs a:hover{
+  text-decoration:underline;
+  opacity:1;
+}
+
 .message-content{
   display:flex;
   flex-direction:column;
@@ -354,11 +390,19 @@ body {
 
     <!-- LEFT AVATAR PANEL -->
     <div class="avatar-panel">
+
       <img src="Image.png" alt="Bot Avatar">
+    
       <div class="bot-info">
         <h3>Ruven</h3>
         <p class="bot-role">HR Agent</p>
       </div>
+    
+      <div class="kb-section">
+        <h4>Reference Documents</h4>
+        <ul id="kb-docs"></ul>
+      </div>
+    
     </div>
   
     <!-- RIGHT CHAT AREA -->

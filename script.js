@@ -17,25 +17,13 @@ function connectWebSocket() {
   socket.onopen = () => {
     console.log("WebSocket connected");
   
-    // Send a getDocs request immediately, including session_id if available
-    socket.send(JSON.stringify({
-      action: "getDocs",
-      session_id: sessionId // can be null initially
-    }));
+    
   };
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
-  if (data.session_id && !sessionId) {
-    sessionId = data.session_id;
-
-    // Request docs once sessionId is assigned
-    socket.send(JSON.stringify({
-      action: "getDocs",
-      session_id: sessionId
-    }));
-  }
+ 
     switch(data.type) {
       case 'text_delta':
         if (!currentBotMessage) {

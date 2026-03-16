@@ -21,7 +21,7 @@ body {
 /* Chat container */
 .chat-container {
   width: 90vw;
-  height: 650px;
+  height: 90vh;
   background: rgba(255, 255, 255, 0.75);
   border-radius: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
@@ -88,15 +88,17 @@ body {
   background:linear-gradient(180deg,#2563eb,#4a7dff);
   display:flex;
   flex-direction:column;
-  align-items:center;
-  justify-content:center;
+  align-items:flex-start;
+  justify-content:flex-start;
   color:white;
 }
 
 .avatar-panel img{
-  width:120px;
-  border-radius:50%;
-  margin-bottom:10px;
+  width:100%;          /* fill the panel width */
+  height:40%;          /* take 30% of panel height */
+  object-fit:cover;    /* prevents stretching */
+  border-radius:0;     /* removes circular shape */
+  opacity: 0.7
 }
 
 .chat-interface{
@@ -119,6 +121,20 @@ body {
 .bot-avatar{
   background:linear-gradient(135deg,#2563eb,#4a7dff);
   color:white;
+}
+
+.bot-info{
+  padding:16px;
+}
+
+.bot-info h3{
+  margin:0;
+}
+
+.bot-role{
+  margin-top:4px;
+  font-size:0.9rem;
+  opacity:0.85;
 }
 
 .message-content{
@@ -339,7 +355,10 @@ body {
     <!-- LEFT AVATAR PANEL -->
     <div class="avatar-panel">
       <img src="Image.png" alt="Bot Avatar">
-      <h3>Chat with Ruven.</h3>
+      <div class="bot-info">
+        <h3>Ruven</h3>
+        <p class="bot-role">HR Agent</p>
+      </div>
     </div>
   
     <!-- RIGHT CHAT AREA -->

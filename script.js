@@ -16,9 +16,11 @@ function connectWebSocket() {
 
   socket.onopen = () => {
     console.log("WebSocket connected");
+  
     // Request knowledge base documents immediately
-  if (socket.readyState === WebSocket.OPEN) {
-    socket.send(JSON.stringify({ action: "getDocs" }));
+    if (socket.readyState === WebSocket.OPEN) {
+      socket.send(JSON.stringify({ action: "getDocs" }));
+    }
   };
 
   socket.onmessage = (event) => {

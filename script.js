@@ -10,6 +10,15 @@ let sessionId = null;
 let socket = null;
 let currentBotMessage = null;
 
+
+
+function toggleKB() {
+  const content = document.querySelector('.kb-content');
+  const icon = document.querySelector('.kb-toggle');
+
+  content.classList.toggle('open');
+  icon.classList.toggle('rotate');
+}
 // --- Connect WebSocket ---
 function connectWebSocket() {
   socket = new WebSocket(WS_URL);

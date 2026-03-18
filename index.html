@@ -374,25 +374,31 @@ body {
   }
 
   .avatar-panel {
-    width: 100%;          /* Full width */
-    height: auto;         /* Adjust height automatically */
-    flex-direction: row;  /* Optionally, make info horizontal */
-    padding: 5px;
+    width:100%;
+    flex-direction: row;
+    align-items: center; /* vertically centers avatar and text */
+    justify-content: flex-start; /* keeps them aligned to left */
+    padding: 8px 12px;
   }
 
   .avatar-panel img {
-  width: 50px;  /* Smaller on mobile */
-  height: 50px;
-  object-fit: cover;
-  border-radius: 50%;
-  margin-right: 12px;
-}
-
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 12px;
+  }
+  .bot-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* vertically centers the text with avatar */
+  }
   .chat-interface {
     width: 100%;
     flex: 1;
   }
-
+  .kb-section {
+    display: none; /* hides the entire reference section on mobile */
+  }
   .kb-content {
     display: none;   /* hidden by default */
   }
@@ -471,7 +477,7 @@ body {
       <div class="kb-section">
         <div class="kb-header" onclick="toggleKB()">
           <h4>Reference Documents</h4>
-          <span class="kb-toggle">▼</span>
+          <span class="kb-toggle"></span>
         </div>
       
         <ul id="kb-docs" class="kb-content"></ul>

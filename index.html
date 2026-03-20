@@ -257,6 +257,18 @@ body {
   box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
 }
 
+#sendBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+#sendBtn img {
+  width: 20px;
+  height: 20px;
+}
+
 #sendBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 14px rgba(37, 99, 235, 0.35);
@@ -363,6 +375,7 @@ body {
 .suggestion-btn:active {
   background: #dbeafe;
 }
+
 
 /* Responsive */
 @media (max-width: 768px) {
@@ -518,7 +531,9 @@ body {
   <div id="inputArea">
         <input type="text" id="messageInput" placeholder="Type your message..." />
         <button id="clearBtn">Clear Chat</button>
-        <button id="sendBtn">Send</button>
+        <button id="sendBtn">
+          <img src="sendIcon.png" alt="Send" />
+        </button>
       </div>
       
   

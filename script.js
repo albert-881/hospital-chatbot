@@ -132,27 +132,38 @@ function connectWebSocket() {
 // --- Helpers ---
 
 async function handleUpload(data) {
-  console.log("⬆️ Uploading to S3...");
+  console.log("⬆️ Upload URL:", data.url);
+  console.log("📂 Selected file:", selectedFile);
+
+  if (!selectedFile) {
+    console.error("❌ No file selected!");
+    return;
+  }
 
   try {
-    await fetch(data.url, {
+    const res = await fetch(data.url, {
       method: "PUT",
-      
-      body: selectedFile
+      body: selectedFile,
     });
+
+    console.log("📡 Upload response:", res);
+
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("❌ Upload failed response:", text);
+      return;
+    }
 
     console.log("✅ Upload success");
 
     addMessage("bot", "✅ File uploaded");
 
-    // Step 2: trigger KB sync
     socket.send(JSON.stringify({
       action: "syncKB"
     }));
 
   } catch (err) {
     console.error("❌ Upload failed:", err);
-    addMessage("bot", "❌ Upload failed");
   }
 }
 

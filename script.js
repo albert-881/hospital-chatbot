@@ -268,6 +268,7 @@ dropZone.addEventListener("drop", (e) => {
 
   selectedFile = file;
   console.log("📡 Sending getUploadUrl...");
+  console.log("📤 Uploading file name:", selectedFile.name);
 
   // Step 1: ask Lambda for upload URL
   socket.send(JSON.stringify({

@@ -210,17 +210,23 @@ dropZone.addEventListener("dragleave", () => {
 // Handle drop
 dropZone.addEventListener("drop", (e) => {
   e.preventDefault();
+
+  console.log("🔥 FILE DROPPED");
+
   dropZone.style.borderColor = "rgba(255,255,255,0.5)";
 
   const file = e.dataTransfer.files[0];
+  console.log("📂 File:", file);
 
   if (!file || file.type !== "application/pdf") {
+    console.log("❌ No file detected");
     alert("Only PDF files allowed");
     return;
   }
 
   selectedFile = file;
-
+  console.log("📡 Sending getUploadUrl...");
+  
   // Step 1: ask Lambda for upload URL
   socket.send(JSON.stringify({
     action: "getUploadUrl",

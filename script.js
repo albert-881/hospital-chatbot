@@ -137,9 +137,7 @@ async function handleUpload(data) {
   try {
     await fetch(data.url, {
       method: "PUT",
-      headers: {
-        "Content-Type": "application/pdf"
-      },
+      
       body: selectedFile
     });
 

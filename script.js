@@ -9,7 +9,6 @@ const clearBtn = document.getElementById("clearBtn");
 let sessionId = null;
 let socket = null;
 let currentBotMessage = null;
-let selectedFile = null;
 
 
 
@@ -36,24 +35,10 @@ function connectWebSocket() {
   };
 
   socket.onmessage = (event) => {
-
-    console.log("📩 WS MESSAGE:", event.data);
-
     const data = JSON.parse(event.data);
 
  
     switch(data.type) {
-
-      case 'upload_url':
-        console.log("🚀 Handling upload_url");
-        handleUpload(data);
-        break;
-
-      case 'sync_started':
-        console.log("📚 Knowledge base syncing...");
-        addMessage("bot", "📚 Updating knowledge base...");
-        break;
-
       case 'text_delta':
         if (!currentBotMessage) {
             currentBotMessage = addMessage("bot", "");
@@ -130,43 +115,6 @@ function connectWebSocket() {
 }
 
 // --- Helpers ---
-
-async function handleUpload(data) {
-  console.log("⬆️ Upload URL:", data.url);
-  console.log("📂 Selected file:", selectedFile);
-
-  if (!selectedFile) {
-    console.error("❌ No file selected!");
-    return;
-  }
-
-  try {
-    const res = await fetch(data.url, {
-      method: "PUT",
-      body: selectedFile,
-    });
-
-    console.log("📡 Upload response:", res);
-
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("❌ Upload failed response:", text);
-      return;
-    }
-
-    console.log("✅ Upload success");
-
-    addMessage("bot", "✅ File uploaded");
-
-    socket.send(JSON.stringify({
-      action: "syncKB"
-    }));
-
-  } catch (err) {
-    console.error("❌ Upload failed:", err);
-  }
-}
-
 function addMessage(sender, text = "") {
   const msg = document.createElement("div");
   msg.className = `message ${sender}`;
@@ -243,46 +191,4 @@ document.addEventListener("click", function(e) {
     // Send the message
     sendMessage();
   }
-});
-
-const dropZone = document.getElementById("dropZone");
-dropZone.style.pointerEvents = "none";
-dropZone.style.opacity = "0";
-// Highlight on drag
-dropZone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  dropZone.style.borderColor = "#fff";
-});
-
-// Remove highlight
-dropZone.addEventListener("dragleave", () => {
-  dropZone.style.borderColor = "rgba(255,255,255,0.5)";
-});
-
-// Handle drop
-dropZone.addEventListener("drop", (e) => {
-  e.preventDefault();
-
-  console.log("🔥 FILE DROPPED");
-
-  dropZone.style.borderColor = "rgba(255,255,255,0.5)";
-
-  const file = e.dataTransfer.files[0];
-  console.log("📂 File:", file);
-
-  if (!file || file.type !== "application/pdf") {
-    console.log("❌ No file detected");
-    alert("Only PDF files allowed");
-    return;
-  }
-
-  selectedFile = file;
-  console.log("📡 Sending getUploadUrl...");
-  console.log("📤 Uploading file name:", selectedFile.name);
-
-  // Step 1: ask Lambda for upload URL
-  socket.send(JSON.stringify({
-    action: "getUploadUrl",
-    fileName: file.name
-  }));
 });

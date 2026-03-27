@@ -43,6 +43,17 @@ function connectWebSocket() {
 
  
     switch(data.type) {
+
+      case 'upload_url':
+        console.log("🚀 Handling upload_url");
+        handleUpload(data);
+        break;
+
+      case 'sync_started':
+        console.log("📚 Knowledge base syncing...");
+        addMessage("bot", "📚 Updating knowledge base...");
+        break;
+
       case 'text_delta':
         if (!currentBotMessage) {
             currentBotMessage = addMessage("bot", "");
@@ -119,6 +130,34 @@ function connectWebSocket() {
 }
 
 // --- Helpers ---
+
+async function handleUpload(data) {
+  console.log("⬆️ Uploading to S3...");
+
+  try {
+    await fetch(data.url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/pdf"
+      },
+      body: selectedFile
+    });
+
+    console.log("✅ Upload success");
+
+    addMessage("bot", "✅ File uploaded");
+
+    // Step 2: trigger KB sync
+    socket.send(JSON.stringify({
+      action: "syncKB"
+    }));
+
+  } catch (err) {
+    console.error("❌ Upload failed:", err);
+    addMessage("bot", "❌ Upload failed");
+  }
+}
+
 function addMessage(sender, text = "") {
   const msg = document.createElement("div");
   msg.className = `message ${sender}`;

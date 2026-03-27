@@ -36,6 +36,9 @@ function connectWebSocket() {
   };
 
   socket.onmessage = (event) => {
+
+    console.log("📩 WS MESSAGE:", event.data);
+
     const data = JSON.parse(event.data);
 
  
@@ -226,7 +229,7 @@ dropZone.addEventListener("drop", (e) => {
 
   selectedFile = file;
   console.log("📡 Sending getUploadUrl...");
-  
+
   // Step 1: ask Lambda for upload URL
   socket.send(JSON.stringify({
     action: "getUploadUrl",

@@ -246,7 +246,8 @@ document.addEventListener("click", function(e) {
 });
 
 const dropZone = document.getElementById("dropZone");
-
+dropZone.style.pointerEvents = "none";
+dropZone.style.opacity = "0";
 // Highlight on drag
 dropZone.addEventListener("dragover", (e) => {
   e.preventDefault();

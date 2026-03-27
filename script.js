@@ -9,6 +9,7 @@ const clearBtn = document.getElementById("clearBtn");
 let sessionId = null;
 let socket = null;
 let currentBotMessage = null;
+let selectedFile = null;
 
 
 
@@ -191,4 +192,38 @@ document.addEventListener("click", function(e) {
     // Send the message
     sendMessage();
   }
+});
+
+const dropZone = document.getElementById("dropZone");
+
+// Highlight on drag
+dropZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  dropZone.style.borderColor = "#fff";
+});
+
+// Remove highlight
+dropZone.addEventListener("dragleave", () => {
+  dropZone.style.borderColor = "rgba(255,255,255,0.5)";
+});
+
+// Handle drop
+dropZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  dropZone.style.borderColor = "rgba(255,255,255,0.5)";
+
+  const file = e.dataTransfer.files[0];
+
+  if (!file || file.type !== "application/pdf") {
+    alert("Only PDF files allowed");
+    return;
+  }
+
+  selectedFile = file;
+
+  // Step 1: ask Lambda for upload URL
+  socket.send(JSON.stringify({
+    action: "getUploadUrl",
+    fileName: file.name
+  }));
 });

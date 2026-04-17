@@ -40,6 +40,11 @@ function connectWebSocket() {
  
     switch(data.type) {
       case 'text_delta':
+        // ✅ Save session ID from first response
+        if (!sessionId && data.session_id) {
+          sessionId = data.session_id;
+          console.log("[LOG] Session ID saved:", sessionId);
+        }
         if (!currentBotMessage) {
             currentBotMessage = addMessage("bot", "");
         }
@@ -54,6 +59,10 @@ function connectWebSocket() {
         break;
 
       case 'stream_end':
+        // ✅ Also save here as backup
+        if (!sessionId && data.session_id) {
+          sessionId = data.session_id;
+        }
         // Streaming finished
         console.log("Stream ended");
         break;
@@ -178,6 +187,8 @@ messageInput.addEventListener("keypress", e => {
 });
 clearBtn.addEventListener("click", () => {
   chatbox.innerHTML = "";   // clears all messages
+  sessionId = null; // ✅ reset session on clear
+  console.log("[LOG] Session cleared");
 });
 
 document.addEventListener("click", function(e) {

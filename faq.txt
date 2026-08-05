@@ -41,24 +41,22 @@ Common questions about when benefits start:
 - What is my benefits effective date?
 - When will I have health insurance?
 
-Answer: Your benefits start date depends on which day of the 
-month you were hired:
+CRITICAL BENEFITS START DATE RULES:
 
-RULE 1 - Hired on the FIRST day of the month:
-Benefits start on the 1st of the month, two months later.
+RULE 1 - Hired on the 1st day of the month ONLY:
+Benefits start exactly 2 months later on the 1st.
 Example: Hired June 1st → Benefits start August 1st
+Example: Hired July 1st → Benefits start September 1st
 Example: Hired August 1st → Benefits start October 1st
 
-RULE 2 - Hired on the SECOND day of the month:
-Benefits start on the 1st of the month, three months later.
+RULE 2 - Hired on ANY other day (2nd through last day of month):
+Benefits start 3 months later on the 1st.
+This applies to the 2nd, 3rd, 15th, 20th, 30th, 31st — 
+any day that is NOT the 1st.
 Example: Hired June 2nd → Benefits start September 1st
-Example: Hired August 2nd → Benefits start November 1st
-
-RULE 3 - Hired in the MIDDLE or END of the month 
-(any day from the 2nd through the last day of the month):
-Benefits start on the 1st of the month, three months later.
 Example: Hired June 15th → Benefits start September 1st
 Example: Hired June 30th → Benefits start September 1st
+Example: Hired August 2nd → Benefits start November 1st
 Example: Hired August 3rd → Benefits start November 1st
 Example: Hired August 15th → Benefits start November 1st
 Example: Hired August 31st → Benefits start November 1st
@@ -66,3 +64,18 @@ Example: Hired August 31st → Benefits start November 1st
 SIMPLE RULE TO REMEMBER:
 - Hired on the 1st → benefits start 2 months later on the 1st
 - Hired on any other day → benefits start 3 months later on the 1st
+
+COMMON MISTAKES TO AVOID:
+- Hired August 3rd is NOT October 1st. It IS November 1st.
+- Hired August 15th is NOT October 1st. It IS November 1st.
+- Hired August 31st is NOT October 1st. It IS November 1st.
+- Hired June 2nd is NOT August 1st. It IS September 1st.
+- Hired June 15th is NOT August 1st. It IS September 1st.
+- Only August 1st gives an October 1st start date.
+- Only June 1st gives an August 1st start date.
+
+HOW TO CALCULATE:
+Step 1: Is the hire date the 1st of the month?
+  - YES → add 2 months → that is the benefits start date
+  - NO → add 3 months → that is the benefits start date
+Step 2: The benefits start date is always the 1st of that month.

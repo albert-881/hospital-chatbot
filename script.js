@@ -56,11 +56,8 @@ function connectWebSocket() {
         // ✅ ADD THIS DEBUG LINE RIGHT HERE
         console.log("[DEBUG] Raw content:", JSON.stringify(data.content));
         // Append streaming text
-        // Append streaming text
-        let content = data.content
-        .replace(/\\n/g, "<br>")
-        .replace(/\n/g, "<br>");
-        currentBotMessage.innerHTML += content;
+        currentBotMessage.dataset.raw = (currentBotMessage.dataset.raw || "") + data.content;
+        currentBotMessage.innerHTML = marked.parse(currentBotMessage.dataset.raw);
         break;
 
       case 'stream_end':

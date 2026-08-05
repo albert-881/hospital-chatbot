@@ -53,7 +53,8 @@ function connectWebSocket() {
         if (currentBotMessage.innerHTML.includes("...")) {
             currentBotMessage.innerHTML = ""; // remove placeholder
         }
-
+        // ✅ ADD THIS DEBUG LINE RIGHT HERE
+        console.log("[DEBUG] Raw content:", JSON.stringify(data.content));
         // Append streaming text
         // Append streaming text
         let content = data.content

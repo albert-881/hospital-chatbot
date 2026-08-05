@@ -55,7 +55,11 @@ function connectWebSocket() {
         }
 
         // Append streaming text
-        currentBotMessage.innerHTML += data.content.replace(/\n/g, "<br>");
+        // Append streaming text
+        let content = data.content
+        .replace(/\\n/g, "<br>")
+        .replace(/\n/g, "<br>");
+        currentBotMessage.innerHTML += content;
         break;
 
       case 'stream_end':
@@ -101,7 +105,10 @@ function connectWebSocket() {
           if (!currentBotMessage) {
             currentBotMessage = addMessage("bot", "");
           }
-          currentBotMessage.innerHTML += data.text.replace(/\n/g, "<br>");
+        let fallbackContent = data.text
+        .replace(/\\n/g, "<br>")
+        .replace(/\n/g, "<br>");
+      currentBotMessage.innerHTML += fallbackContent;
           chatbox.scrollTop = chatbox.scrollHeight;
         }
         
